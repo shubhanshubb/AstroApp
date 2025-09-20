@@ -2,6 +2,7 @@ import * as React from 'react';
 import { createNativeBottomTabNavigator } from '@bottom-tabs/react-navigation';
 import Home from '../screens/Home';
 import Profile from '../screens/Profile';
+import Chat from '../screens/Chat';
 import Setting from '../screens/Setting';
 
 const Tab = createNativeBottomTabNavigator();
@@ -27,6 +28,13 @@ const BottomTab = () => {
           component={Profile}
           options={{
             tabBarIcon: () => ({ sfSymbol: 'person.crop.circle' }),
+          }}
+        />
+        <Tab.Screen
+          name="Chat"
+          component={Chat}
+          options={{
+            tabBarIcon: () => ({ sfSymbol: 'bubble.left.and.bubble.right.fill' }),
           }}
         />
         <Tab.Screen
