@@ -4,9 +4,11 @@ A beautiful mobile journal app that combines daily horoscopes with personal jour
 
 ## 📱 Demo
 
-https://github.com/user-attachments/assets/record.mov
+![App Demo](./recording.mov)
 
 > A quick walkthrough of the app showing horoscope viewing, multiple journal entries creation, and saved entries management with long-press actions.
+
+**Note:** If the video doesn't play above, you can [download and watch it here](./recording.mov).
 
 ## ✨ Features
 
