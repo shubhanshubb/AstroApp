@@ -13,7 +13,13 @@ const App = () => {
     },
   };
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: 'black' , paddingTop: 30,}}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: 'white',
+        paddingTop: 40,
+      }}
+    >
       <NavigationContainer theme={MyTheme}>
         <JournalProvider>
           <AppNavigator />

@@ -1,26 +1,73 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, TextInput, Button, Text, StyleSheet, ScrollView } from 'react-native';
+import {
+  View,
+  TextInput,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import { JournalContext } from '../src/context/JournalContext';
 
-const Journal = () => {
-  const { saveEntry, getEntry, selectedSign } = useContext(JournalContext);
-  const dateKey = new Date().toISOString().slice(0, 10);
+const Journal = ({ route }) => {
+  const { saveEntry, getEntry, getEntries, deleteEntry, selectedSign } = useContext(JournalContext);
+  const paramDate = route?.params?.dateKey || null;
+  const paramEntryId = route?.params?.entryId || null;
+  const dateKey = paramDate || new Date().toISOString().slice(0, 10);
   const [text, setText] = useState('');
+  const [editingId, setEditingId] = useState(paramEntryId);
 
   useEffect(() => {
-    const e = getEntry(dateKey);
-    if (e) setText(e.text);
-  }, []);
+    // if an entryId is provided, load that entry; otherwise load the latest for the date if present
+    if (paramEntryId) {
+      const e = getEntry(dateKey, paramEntryId);
+      if (e) {
+        setText(e.text);
+        setEditingId(e.id);
+        return;
+      }
+    }
+    const list = getEntries(dateKey);
+    if (list && list.length > 0) {
+      setText(list[0].text);
+      setEditingId(list[0].id);
+    } else {
+      setText('');
+      setEditingId(null);
+    }
+  }, [dateKey, paramEntryId]);
 
   const handleSave = async () => {
-    await saveEntry(dateKey, selectedSign, text);
-    alert('Saved');
+    if (!text || text.trim().length === 0) {
+      Alert.alert('Empty', 'Please write something before saving.');
+      return;
+    }
+    const saved = await saveEntry(dateKey, selectedSign, text, editingId);
+    setEditingId(saved.id);
+    Alert.alert('Saved');
+  };
+
+  const handleNew = () => {
+    setText('');
+    setEditingId(null);
+  };
+
+  const handleDelete = async id => {
+    Alert.alert('Delete entry', 'Are you sure?', [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Delete', style: 'destructive', onPress: async () => { await deleteEntry(dateKey, id); setText(''); setEditingId(null); } },
+    ]);
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{ padding: 16 }}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={{ padding: 16 }}
+    >
       <Text style={styles.date}>{new Date().toDateString()}</Text>
       <Text style={styles.sign}>Sign: {selectedSign}</Text>
+
       <TextInput
         value={text}
         onChangeText={setText}
@@ -29,7 +76,12 @@ const Journal = () => {
         style={styles.input}
       />
       <View style={styles.actions}>
-        <Button title="Save" onPress={handleSave} />
+        <TouchableOpacity
+          style={styles.primaryButton}
+          onPress={() => handleSave()}
+        >
+          <Text style={styles.primaryText}>Save</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
@@ -38,9 +90,45 @@ const Journal = () => {
 export default Journal;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#000' },
-  date: { color: '#fff', fontSize: 18, marginBottom: 6 },
-  sign: { color: '#aaa', marginBottom: 12 },
-  input: { minHeight: 240, color: '#fff', backgroundColor: '#0b0b0b', padding: 12, borderRadius: 8 },
-  actions: { marginTop: 16 },
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  date: {
+    color: '#2655A3',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 6,
+  },
+  sign: {
+    color: '#111',
+    marginBottom: 12,
+  },
+  input: {
+    minHeight: 240,
+    color: '#111',
+    fontWeight: '500',
+    // backgroundColor: '#0b0b0b',
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#111',
+    padding: 6,
+    borderRadius: 4,
+  },
+  actions: {
+    marginTop: 16,
+  },
+  primaryButton: {
+    flex: 1,
+    backgroundColor: '#2655A3',
+    padding: 14,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginRight: 8,
+  },
+  primaryText: {
+    color: '#fff',
+    fontWeight: '700',
+  },
 });
