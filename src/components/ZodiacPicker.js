@@ -34,32 +34,6 @@ const ZodiacPicker = ({ value, onValueChange }) => {
   // label for display
   const label = selected.charAt(0).toUpperCase() + selected.slice(1);
 
-  // Android: use native dropdown mode inline
-  if (Platform.OS === 'android') {
-    return (
-      <View style={styles.wrapper}>
-        <View style={styles.containerAndroid}>
-          <Picker
-            selectedValue={selected}
-            onValueChange={val => onValueChange && onValueChange(val)}
-            style={styles.picker}
-            mode="dropdown"
-            accessibilityLabel="Zodiac sign picker"
-            testID="zodiac-picker"
-          >
-            {SIGNS.map(s => (
-              <Picker.Item
-                key={s}
-                label={s.charAt(0).toUpperCase() + s.slice(1)}
-                value={s}
-              />
-            ))}
-          </Picker>
-        </View>
-      </View>
-    );
-  }
-
   // iOS: show a pill that opens a modal with the wheel picker
   return (
     <View style={styles.wrapper}>
@@ -125,6 +99,7 @@ const styles = StyleSheet.create({
   wrapper: {
     marginTop: 20,
     backgroundColor: 'transparent',
+    width: '100%',
   },
   containerAndroid: {
     backgroundColor: '#f6f6f6',
@@ -132,7 +107,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   pill: {
-    backgroundColor: '#f6f6f6',
+    backgroundColor: 'orange',
     paddingVertical: 10,
     paddingHorizontal: 18,
     borderRadius: 12,
@@ -144,7 +119,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
   },
-  picker: { color: '#111', height: 44 },
+  picker: {
+    color: '#111',
+    height: 44,
+  },
   pickerIOS: { backgroundColor: '#fff' },
   modalOverlay: {
     flex: 1,
@@ -164,6 +142,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: '#eee',
   },
-  modalButton: { paddingHorizontal: 12, paddingVertical: 6 },
-  modalButtonText: { color: '#007aff', fontSize: 16 },
+  modalButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+  },
+  modalButtonText: {
+    color: 'black',
+    fontSize: 16,
+  },
 });
