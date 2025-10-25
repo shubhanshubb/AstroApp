@@ -2,6 +2,12 @@
 
 A beautiful mobile journal app that combines daily horoscopes with personal journaling. Built with React Native featuring a modern UI inspired by popular astrology apps like AstroTalk.
 
+## 📱 Demo
+
+https://github.com/user-attachments/assets/record.mov
+
+> A quick walkthrough of the app showing horoscope viewing, multiple journal entries creation, and saved entries management with long-press actions.
+
 ## ✨ Features
 
 ### 🌟 Horoscope
