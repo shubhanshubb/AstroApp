@@ -19,20 +19,15 @@ const Journal = ({ route }) => {
   const [editingId, setEditingId] = useState(paramEntryId);
 
   useEffect(() => {
-    // if an entryId is provided, load that entry; otherwise load the latest for the date if present
+    // if an entryId is provided (came from SavedJournal), load that entry for editing
     if (paramEntryId) {
       const e = getEntry(dateKey, paramEntryId);
       if (e) {
         setText(e.text);
         setEditingId(e.id);
-        return;
       }
-    }
-    const list = getEntries(dateKey);
-    if (list && list.length > 0) {
-      setText(list[0].text);
-      setEditingId(list[0].id);
     } else {
+      // Normal journal tab - always start fresh
       setText('');
       setEditingId(null);
     }
@@ -43,8 +38,9 @@ const Journal = ({ route }) => {
       Alert.alert('Empty', 'Please write something before saving.');
       return;
     }
-    const saved = await saveEntry(dateKey, selectedSign, text, editingId);
-    setEditingId(saved.id);
+    // Only pass editingId if we came from SavedJournal, otherwise always create new
+    const saved = await saveEntry(dateKey, selectedSign, text, paramEntryId ? editingId : null);
+    setText(''); // Clear after saving
     Alert.alert('Saved');
   };
 
@@ -80,7 +76,7 @@ const Journal = ({ route }) => {
           style={styles.primaryButton}
           onPress={() => handleSave()}
         >
-          <Text style={styles.primaryText}>Save</Text>
+          <Text style={styles.primaryText}>{paramEntryId ? 'Update' : 'Save'}</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
